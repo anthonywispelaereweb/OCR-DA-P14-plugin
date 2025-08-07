@@ -1,6 +1,6 @@
 {
   "name": "hrnet-plugin-modal-aw",
-  "version": "1.0.0",
+  "version": "1.0.6",
   "description": "Reusable modal component from HRNet React project",
   "main": "dist/hrnet-plugin-modal-aw.js",
   "module": "dist/hrnet-plugin-modal-aw.mjs",
