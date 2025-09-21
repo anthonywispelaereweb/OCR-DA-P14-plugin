@@ -32,18 +32,17 @@ import { Modal } from 'hrnet-plugin-modal-aw';
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   return (
     <div>
       <button onClick={openModal}>Ouvrir la modale</button>
-      
       <Modal
-        isOpen={toggleModal}
+        isOpen={isModalOpen}
         message="Employé créé avec succès !"
-        onClose={toggleModal}
+        onClose={closeModal}
+        customClass="ma-classe-personnalisee" // optionnel : pour personnaliser le style
       />
     </div>
   );
@@ -61,6 +60,8 @@ Le composant Modal accepte les props suivantes :
 | `isOpen` | boolean | Oui | Contrôle la visibilité de la modale |
 | `message` | string | Non | Le message à afficher dans la modale |
 | `onClose` | function | Oui | Fonction appelée pour fermer la modale |
+| `customClass` | string | Non | Classe CSS personnalisée appliquée au conteneur principal de la modale |
+| `position` | string | Non | Position de la modale sur l'écran (`center` par défaut, `top`, `bottom`, etc.) |
 
 ## Fonctionnalités
 
@@ -69,14 +70,51 @@ Le composant Modal accepte les props suivantes :
 - **Responsive** : La modale s'adapte aux différentes tailles d'écran
 - **Accessible** : Structure HTML sémantique pour une meilleure accessibilité
 
+
+## Gestion de la position
+
+La prop `position` permet de choisir l'emplacement de la modale sur l'écran. Par défaut, la modale est centrée (`center`).
+
+
+**Valeurs possibles :**
+
+- `center` (par défaut) : centre la modale
+- `top` : affiche la modale en haut de l'écran
+- `bottom` : affiche la modale en bas de l'écran
+- `top-left` : coin supérieur gauche
+- `top-right` : coin supérieur droit
+- `bottom-left` : coin inférieur gauche
+- `bottom-right` : coin inférieur droit
+
+**Exemple d'utilisation :**
+
+```jsx
+<Modal
+  isOpen={isModalOpen}
+  onClose={closeModal}
+  message="Employé créé avec succès !"
+  position="top" // ou "bottom", "center"...
+/>
+```
+
 ## Personnalisation
 
-Les styles CSS sont inclus par défaut, mais vous pouvez les personnaliser en redéfinissant les classes CSS :
+Vous pouvez personnaliser la modale de deux façons :
 
-- `.modal` : Conteneur principal de la modale
-- `.modal-dialog` : Contenu de la modale
-- `.modal-close` : Bouton de fermeture
-- `.modal-overlay` : Overlay de fond
+1. **Via la prop `customClass`** :
+
+  Passez une classe CSS personnalisée à la prop `customClass` pour surcharger ou ajouter vos propres styles au conteneur principal de la modale.
+
+  ```jsx
+  <Modal customClass="ma-classe-personnalisee" ... />
+  ```
+
+2. **En redéfinissant les classes CSS par défaut** :
+
+  - `.modal` : Conteneur principal de la modale
+  - `.modal-dialog` : Contenu de la modale
+  - `.modal-close` : Bouton de fermeture
+  - `.modal-overlay` : Overlay de fond
 
 ## Compatibilité
 
