@@ -1,6 +1,17 @@
 import React, { useEffect, useRef } from 'react';
 
-const Modal = ({ isOpen, message, onClose, customClass = '', position = 'center' }) => {
+const Modal = ({ 
+    isOpen, 
+    message, 
+    onClose, 
+    customClass = '', 
+    position = 'center', 
+    children,
+    preventClose = false,
+    forceClose,
+    backdropColor = 'rgba(0, 0, 0, 0.5)',
+    title
+}) => {
     const dialogRef = useRef(null);
     const closeBtnRef = useRef(null);
 
@@ -15,7 +26,7 @@ const Modal = ({ isOpen, message, onClose, customClass = '', position = 'center'
     useEffect(() => {
         if (!isOpen) return;
         const handleKeyDown = (e) => {
-            if (e.key === 'Escape') {
+            if (e.key === 'Escape' && !preventClose) {
                 onClose();
             }
             // Focus trap basique : tab reste dans la modale
@@ -34,31 +45,61 @@ const Modal = ({ isOpen, message, onClose, customClass = '', position = 'center'
         };
         document.addEventListener('keydown', handleKeyDown);
         return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [isOpen, onClose]);
+    }, [isOpen, onClose, preventClose]);
+
+    // Gestion de la fermeture forcée
+    useEffect(() => {
+        if (forceClose) {
+            forceClose();
+        }
+    }, [forceClose]);
+
+    // Fonction de fermeture qui respecte preventClose
+    const handleClose = () => {
+        if (!preventClose) {
+            onClose();
+        }
+    };
 
     if (!isOpen) return null;
 
     return (
         <>
-            <span className="modal-overlay" onClick={onClose}></span>
+            <div 
+                className="modal-backdrop" 
+                style={{ backgroundColor: backdropColor }}
+                onClick={handleClose}
+            ></div>
             <div
                 className={`modal${customClass ? ' ' + customClass : ''} modal-${position}`}
                 role="dialog"
                 aria-modal="true"
-                aria-labelledby="modal-title"
+                {...(title && !children ? { 'aria-labelledby': 'modal-title' } : {})}
                 ref={dialogRef}
             >
                 <div className="modal-dialog">
-                    <button
-                        className="modal-close"
-                        onClick={onClose}
-                        aria-label="Fermer la modale"
-                        ref={closeBtnRef}
-                    >
-                        &times;
-                    </button>
-                    <h2 id="modal-title" style={{fontSize: '1.2em', margin: 0}}>Notification</h2>
-                    <p>{message ? message : "No message available"}</p>
+                    {!preventClose && (
+                        <button
+                            className="modal-close"
+                            onClick={handleClose}
+                            aria-label="Fermer la modale"
+                            ref={closeBtnRef}
+                        >
+                            &times;
+                        </button>
+                    )}
+                    {children ? (
+                        children
+                    ) : (
+                        <>
+                            {title && (
+                                <h2 id="modal-title" style={{fontSize: '1.2em', margin: 0}}>
+                                    {title}
+                                </h2>
+                            )}
+                            <p>{message ? message : "No message available"}</p>
+                        </>
+                    )}
                 </div>
             </div>
         </>
